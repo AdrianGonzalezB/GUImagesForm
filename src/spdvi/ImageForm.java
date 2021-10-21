@@ -10,9 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 
 /**
  *
@@ -99,12 +97,11 @@ public class ImageForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnResizeImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResizeImageActionPerformed
-        // TODO add your handling code here:
-        
         BufferedImage originalImage = null;
         try {
+            // Buscamos la imagen original
             originalImage = ImageIO.read(new File("src/spdvi/images/pexels-photo-1182825.jpeg"));
-            ImageIcon icon = resizeImageIcon(originalImage, lblImageView1);
+            ImageIcon icon = resizeImageIcon(originalImage, lblImageView1.getWidth(),lblImageView1.getHeight());
             lblImageView1.setIcon(icon);
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -112,28 +109,40 @@ public class ImageForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnResizeImageActionPerformed
 
     private void btnResizeImage2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResizeImage2ActionPerformed
-        // TODO add your handling code here:
         BufferedImage originalImage = null;
         try {
+            // Buscamos la imagen original
             originalImage = ImageIO.read(new File("src/spdvi/images/pexels-photo-103123.jpeg"));
-            ImageIcon icon = resizeImageIcon(originalImage, lblImageView2);
+            ImageIcon icon = resizeImageIcon(originalImage, lblImageView2.getWidth(),lblImageView2.getHeight());
             lblImageView2.setIcon(icon);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
     }//GEN-LAST:event_btnResizeImage2ActionPerformed
 
-    private ImageIcon resizeImageIcon(BufferedImage originalImage, JLabel lblImageView) {
- 
-            int desiredWidth = lblImageView.getWidth();
-            // Hacemos Casting de float para que no de entero y nos de el valor que toca
-            float aspectRatio = (float)originalImage.getWidth() / (float)originalImage.getHeight();
-            int desiredHeight = Math.round(desiredWidth / aspectRatio);
-            Image resultingImage = originalImage.getScaledInstance(desiredWidth,desiredHeight, Image.SCALE_SMOOTH);
-            BufferedImage outputImage = new BufferedImage(desiredWidth, desiredHeight, BufferedImage.SCALE_DEFAULT);
-            outputImage.getGraphics().drawImage(resultingImage, 0, 0, null);
-            ImageIcon imageIcon = new ImageIcon(outputImage);
-            return imageIcon;
+    private ImageIcon resizeImageIcon(BufferedImage originalImage, int desiredWidth, int desiredHeight) {
+        // Iniciamos las 2 variables de anchura y altura de la imagen nuevas
+        int newHeight = 0;
+        int newWidth = 0;
+        // Hacemos Casting de float para que no de entero y nos de el valor que toca
+        float aspectRatio = (float)originalImage.getWidth() / (float)originalImage.getHeight();
+        // Comprovamos si la imagen es mas alta o mas ancha.
+        if (originalImage.getWidth() > originalImage.getHeight()) {
+            // Asignamos los nuevos valores dependiendo de ello y calculamos.
+            newWidth = desiredWidth;
+            newHeight = Math.round(desiredWidth / aspectRatio);
+        } else {
+            newHeight = desiredHeight;
+            newWidth = Math.round(desiredWidth * aspectRatio) ;
+        }
+        // Escalamos la imagen
+        Image resultingImage = originalImage.getScaledInstance(desiredWidth,desiredHeight, Image.SCALE_SMOOTH);
+        BufferedImage outputImage = new BufferedImage(desiredWidth, desiredHeight, BufferedImage.SCALE_DEFAULT);
+        // Permite dibujar de nuevo la imagen al BufferedImage
+        outputImage.getGraphics().drawImage(resultingImage, 0, 0, null);
+        ImageIcon imageIcon = new ImageIcon(outputImage);
+        // Devolvemos la imagen
+        return imageIcon;
        
     }
     /**
